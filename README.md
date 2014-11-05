@@ -50,6 +50,49 @@ The following example with run one mysql query rather than thousands:
 		end
 	end
 
+If you don't care to update existing rows, and you wish to discard any unique key violations silently, you may use the 'insert_ignore' method. It works exactly the same as 'insert_or_update', but the 4th parameter is no longer necessary.
+Here is the former example using 'insert_ignore' instead:
+
+	class Stat < ActiveRecord::Base
+		extend MassUpdater
+
+		def record_rows
+			stat_inserts = []
+
+			rows = OtherObject.pull_thousands_of_rows_of_data_from_a_some_source()
+			rows.each do |row|
+				stat_inserts << "'#{self.connection.quote_string(row[:name])}', #{row[:id]}, '#{row[:status]}', #{row[:metric]}, NOW(), NOW()"
+			end
+			self.insert_ignore('stats', [:name, :api_id, :status, :metric, :created_at, :updated_at], adgroup_inserts)
+		end
+	end
+
+It is very common in my workflow to need to translate from an external API's ID to my ActiveRecord ID when setting up foreign keys. I've included a "build_api_hash" method to help with this translation.
+It returns a simple hash, mapping the api_id to id.
+Once again, the method will do it's work with one hit to the database rather than thousands.  An extended example is below:
+
+	class LineItem < ActiveRecord::Base
+		has_many :stats
+	end
+
+	class Stat < ActiveRecord::Base
+		belongs_to :line_item
+		extend MassUpdater
+
+		def record_rows
+			stat_inserts = []
+			line_item_ids = rpt.map{|r| r[:line_item_api_id]}.uniq.compact
+			line_item_hash = self.build_api_hash(LineItem, 'api_id', line_item_ids)
+
+			rows = OtherObject.pull_thousands_of_rows_of_data_from_a_some_source()
+			rows.each do |row|
+				stat_inserts << "'#{self.connection.quote_string(row[:name])}', #{row[:id]}, #{line_item_hash[row[:id]]}, '#{row[:status]}', #{row[:metric]}, NOW(), NOW()"
+			end
+			self.insert_or_update('stats', [:name, :api_id, :line_item_id, :status, :metric, :created_at, :updated_at], adgroup_inserts, [:name, :status, :metric, :updated_at])
+		end
+	end
+
+
 ## Contributing
 
 1. Fork it ( https://github.com/KarateCode/mass_updater/fork )
