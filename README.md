@@ -25,26 +25,30 @@ Once the gem is included in the project, you can mix it into any existing Active
 This will make the "insert_or_update" method available in your model.
 
 The insert_or_update method takes 4 parameters:
+
 1. The table name to be updated
+
 2. An array containing the fields to updated
+
 3. An array containing strings of the actual rows to be inserted. This will be used as the VALUES block in the mysql query. The values should be in the same or as the field name passed in parameter 2
+
 4. An array of the fields that should be updated if a mysql unique key is violated. This gem uses mysql's "ON DUPLICATE KEY UPDATE" command to make either an insert or update within one query. Make sure to set up your mysql keys appropriately to ensure rows are updated rather than duplicated under the proper circumstances.
 
 The following example with run one mysql query rather than thousands:
 
-class Stat < ActiveRecord::Base
-	extend MassUpdater
+	class Stat < ActiveRecord::Base
+		extend MassUpdater
 
-	def record_rows
-		stat_inserts = []
+		def record_rows
+			stat_inserts = []
 
-		rows = OtherObject.pull_thousands_of_rows_of_data_from_a_some_source()
-		rows.each do |row|
-			stat_inserts << "'#{self.connection.quote_string(row[:name])}', #{row[:id]}, '#{row[:status]}', #{row[:metric]}, NOW(), NOW()"
+			rows = OtherObject.pull_thousands_of_rows_of_data_from_a_some_source()
+			rows.each do |row|
+				stat_inserts << "'#{self.connection.quote_string(row[:name])}', #{row[:id]}, '#{row[:status]}', #{row[:metric]}, NOW(), NOW()"
+			end
+			self.insert_or_update('stats', [:name, :api_id, :status, :metric, :created_at, :updated_at], adgroup_inserts, [:name, :status, :metric, :updated_at])
 		end
-		self.insert_or_update('stats', [:name, :api_id, :status, :metric, :created_at, :updated_at], adgroup_inserts, [:name, :status, :metric, :updated_at])
 	end
-end
 
 ## Contributing
 
