@@ -28,7 +28,7 @@ VALUES (#{inserts.join("),\n(")});"
 
 	def build_api_hash(relation, field, ids)
 		hash = {}
-		plucks = relation.where(["#{field} IN (?)", ids]).map{|c| [c.id, c.api_id]} # Mysql will ignore anything past first 1000 items for an 'IN' clause..?
+		plucks = relation.where(["#{field} IN (?)", ids]).map{|c| [c.id, c.api_id]}
 		plucks.each do |c|
 			hash[c.last] = c.first
 		end

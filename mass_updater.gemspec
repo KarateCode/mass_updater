@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["michael.schneider@adtegrity.com"]
   spec.summary       = %q{Bulk updating and inserting of records for ActiveRecord and mysql}
   spec.description   = %q{This gem can reduce rounds trips between your app and the database from thousands down to a single query}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/KarateCode/mass_updater"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -20,5 +20,4 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "activerecord", "~> 3.2"
-  spec.add_development_dependency "rake"
 end
