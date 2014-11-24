@@ -19,5 +19,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.6"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency 'database_cleaner'
+  spec.add_development_dependency 'mysql2'
   spec.add_development_dependency "activerecord", "~> 3.2"
 end

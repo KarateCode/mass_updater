@@ -12,7 +12,7 @@ module MassUpdater
 VALUES (#{inserts.join("),\n(")})
 ON DUPLICATE KEY UPDATE 
 #{update_sql.join(", ")};"
-			self.connection.execute(sql)
+			ActiveRecord::Base.connection.execute(sql)
 		end
 	end
 
@@ -22,7 +22,7 @@ ON DUPLICATE KEY UPDATE
 
 			sql = "INSERT IGNORE INTO #{table_name} (`#{record_fields.join('`, `')}`)
 VALUES (#{inserts.join("),\n(")});"
-			self.connection.execute(sql)
+			ActiveRecord::Base.connection.execute(sql)
 		end
 	end
 
