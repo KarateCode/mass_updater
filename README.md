@@ -30,11 +30,11 @@ The insert_or_update method takes 4 parameters:
 
 2. An array containing the fields to updated
 
-3. An array containing strings of the actual rows to be inserted. This will be used as the VALUES block in the mysql query. The values should be in the same or as the field name passed in parameter 2
+3. An array containing strings of the actual rows to be inserted. This will be used as the VALUES block in the mysql query. The values should be in the same order as the field name passed in parameter 2.
 
 4. An array of the fields that should be updated if a mysql unique key is violated. This gem uses mysql's "ON DUPLICATE KEY UPDATE" command to make either an insert or update within one query. Make sure to set up your mysql keys appropriately to ensure rows are updated rather than duplicated under the proper circumstances.
 
-The following example with run one mysql query rather than thousands:
+The following example will run one mysql query rather than thousands:
 
 	class Stat < ActiveRecord::Base
 		extend MassUpdater
@@ -69,7 +69,7 @@ Here is the former example using 'insert_ignore' instead:
 
 It is very common in my workflow to need to translate from an external API's ID to my ActiveRecord ID when setting up foreign keys. I've included a "build_api_hash" method to help with this translation.
 It returns a simple hash, mapping the api_id to id.
-Once again, the method will do it's work with one hit to the database rather than thousands.  An extended example is below:
+Once again, the method will do its work with one hit to the database rather than thousands.  An extended example is below:
 
 	class LineItem < ActiveRecord::Base
 		has_many :stats
